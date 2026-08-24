@@ -76,8 +76,11 @@ public class DatabaseSeeder implements CommandLineRunner {
         // 1. Seed Skills
         List<Skill> skills = new ArrayList<>();
         for (String sName : SKILL_POOL) {
-            Skill s = Skill.builder().id(UUID.randomUUID()).name(sName).build();
-            skills.add(skillRepository.save(s));
+            Skill s = skillRepository.findByNameIgnoreCase(sName).orElseGet(() -> {
+                Skill newSkill = Skill.builder().id(UUID.randomUUID()).name(sName).build();
+                return skillRepository.save(newSkill);
+            });
+            skills.add(s);
         }
 
         // 2. Seed Companies (100)
