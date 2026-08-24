@@ -96,13 +96,12 @@ public class DatabaseSeeder implements CommandLineRunner {
             companies.add(c);
 
             // Seed Reliability score
-            CompanyReliabilityScore score = CompanyReliabilityScore.builder()
-                    .companyId(c.getId())
-                    .company(c)
-                    .onboardingCount(randomRange(5, 20))
-                    .withdrawalCount(randomRange(0, 2))
-                    .build();
-            companyReliabilityScoreRepository.save(score);
+            int onboarding = randomRange(5, 20);
+            int withdrawal = randomRange(0, 2);
+            jdbcTemplate.update(
+                "INSERT INTO company_reliability_scores (company_id, onboarding_count, withdrawal_count, reliability_score) VALUES (?, ?, ?, 100.00)",
+                c.getId(), onboarding, withdrawal
+            );
         }
 
         // 3. Seed Internship Listings (300)
