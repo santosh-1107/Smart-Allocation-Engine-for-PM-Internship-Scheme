@@ -16,6 +16,7 @@ import java.time.LocalDate;
 import java.util.*;
 
 @Component
+@org.springframework.context.annotation.Profile("!test")
 public class DatabaseSeeder implements CommandLineRunner {
 
     @Autowired

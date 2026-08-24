@@ -60,7 +60,7 @@ class DropoutRiskRequest(BaseModel):
     academic_percentage: float = Field(default=75.0)
     stipend_company_share: float = Field(default=1500.0)
     skill_match_ratio: float = Field(default=0.5)
-    is_out_of_district: bool = Field(default=false)
+    is_out_of_district: bool = Field(default=False)
 
 class DropoutRiskResponse(BaseModel):
     dropout_risk: float
