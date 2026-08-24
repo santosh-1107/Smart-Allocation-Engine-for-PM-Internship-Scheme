@@ -2,6 +2,45 @@ server:
   port: 8080
 
 spring:
+  profiles:
+    active: ${SPRING_PROFILES_ACTIVE:h2}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+
+services:
+  allocation-engine: ${ALLOCATION_ENGINE_URL:http://localhost:8001}
+  ml-service: ${ML_SERVICE_URL:http://localhost:8002}
+  rag-service: ${RAG_SERVICE_URL:http://localhost:8003}
+
+---
+spring:
+  config:
+    activate:
+      on-profile: h2
+  datasource:
+    url: jdbc:h2:mem:pmis;DB_CLOSE_DELAY=-1;MODE=PostgreSQL
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: update
+  flyway:
+    enabled: false
+  autoconfigure:
+    exclude:
+      - org.springframework.boot.autoconfigure.amqp.RabbitAutoConfiguration
+
+---
+spring:
+  config:
+    activate:
+      on-profile: postgres
   datasource:
     url: jdbc:postgresql://${POSTGRES_HOST:localhost}:${POSTGRES_PORT:5432}/${POSTGRES_DB:pmis}
     username: ${POSTGRES_USER:pmis}
@@ -14,14 +53,3 @@ spring:
     enabled: true
   rabbitmq:
     addresses: ${RABBITMQ_URL:amqp://pmis:pmis_dev@localhost:5672}
-
-management:
-  endpoints:
-    web:
-      exposure:
-        include: health,info,metrics
-
-services:
-  allocation-engine: ${ALLOCATION_ENGINE_URL:http://localhost:8001}
-  ml-service: ${ML_SERVICE_URL:http://localhost:8002}
-  rag-service: ${RAG_SERVICE_URL:http://localhost:8003}

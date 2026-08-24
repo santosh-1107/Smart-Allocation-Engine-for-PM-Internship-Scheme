@@ -274,10 +274,18 @@ public class DatabaseSeeder implements CommandLineRunner {
             
             String vectorStr = "[" + joinFloatArray(embedding) + "]";
 
-            jdbcTemplate.update(
-                "INSERT INTO policy_chunks (id, document_id, section_title, content, embedding) VALUES (?, ?, ?, ?, ?::vector)",
-                chunkId, doc.getId(), sectionTitle, content, vectorStr
-            );
+            try {
+                jdbcTemplate.update(
+                    "INSERT INTO policy_chunks (id, document_id, section_title, content, embedding) VALUES (?, ?, ?, ?, ?::vector)",
+                    chunkId, doc.getId(), sectionTitle, content, vectorStr
+                );
+            } catch (Exception e) {
+                // Fallback for local H2 database which does not have pgvector module
+                jdbcTemplate.update(
+                    "INSERT INTO policy_chunks (id, document_id, section_title, content) VALUES (?, ?, ?, ?)",
+                    chunkId, doc.getId(), sectionTitle, content
+                );
+            }
         }
 
         System.out.println("PMIS Smart Allocation Database successfully seeded!");
