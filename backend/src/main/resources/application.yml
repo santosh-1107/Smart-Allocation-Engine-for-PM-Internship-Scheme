@@ -1,0 +1,27 @@
+server:
+  port: 8080
+
+spring:
+  datasource:
+    url: jdbc:postgresql://${POSTGRES_HOST:localhost}:${POSTGRES_PORT:5432}/${POSTGRES_DB:pmis}
+    username: ${POSTGRES_USER:pmis}
+    password: ${POSTGRES_PASSWORD:pmis_dev}
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: validate
+  flyway:
+    enabled: true
+  rabbitmq:
+    addresses: ${RABBITMQ_URL:amqp://pmis:pmis_dev@localhost:5672}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+
+services:
+  allocation-engine: ${ALLOCATION_ENGINE_URL:http://localhost:8001}
+  ml-service: ${ML_SERVICE_URL:http://localhost:8002}
+  rag-service: ${RAG_SERVICE_URL:http://localhost:8003}

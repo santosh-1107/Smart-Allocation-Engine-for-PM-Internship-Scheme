@@ -1,0 +1,85 @@
+services:
+  postgres:
+    image: pgvector/pgvector:pg16
+    environment:
+      POSTGRES_DB: pmis
+      POSTGRES_USER: pmis
+      POSTGRES_PASSWORD: pmis_dev
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./backend/src/main/resources/db/init.sql:/docker-entrypoint-initdb.d/01-init.sql:ro
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    environment:
+      RABBITMQ_DEFAULT_USER: pmis
+      RABBITMQ_DEFAULT_PASS: pmis_dev
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+
+  backend:
+    build: ./backend
+    ports:
+      - "8080:8080"
+    environment:
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: 5432
+      POSTGRES_DB: pmis
+      POSTGRES_USER: pmis
+      POSTGRES_PASSWORD: pmis_dev
+      RABBITMQ_URL: amqp://pmis:pmis_dev@rabbitmq:5672
+      ALLOCATION_ENGINE_URL: http://allocation-engine:8001
+      ML_SERVICE_URL: http://ml-service:8002
+      RAG_SERVICE_URL: http://rag-service:8003
+    depends_on:
+      - postgres
+      - rabbitmq
+
+  allocation-engine:
+    build: ./allocation-engine
+    ports:
+      - "8001:8001"
+    environment:
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: 5432
+      POSTGRES_DB: pmis
+      POSTGRES_USER: pmis
+      POSTGRES_PASSWORD: pmis_dev
+    depends_on:
+      - postgres
+
+  ml-service:
+    build: ./ml-service
+    ports:
+      - "8002:8002"
+
+  rag-service:
+    build: ./rag-service
+    ports:
+      - "8003:8003"
+    environment:
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: 5432
+      POSTGRES_DB: pmis
+      POSTGRES_USER: pmis
+      POSTGRES_PASSWORD: pmis_dev
+    depends_on:
+      - postgres
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+
+volumes:
+  postgres_data:

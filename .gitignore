@@ -1,0 +1,67 @@
+# Frontend
+frontend/node_modules/
+frontend/.next/
+frontend/out/
+frontend/dist/
+frontend/build/
+frontend/coverage/
+frontend/npm-debug.log*
+frontend/yarn-debug.log*
+frontend/yarn-error.log*
+
+# Java/Spring Boot
+backend/target/
+backend/*.class
+backend/*.log
+backend/.idea/
+backend/*.iml
+
+# Python
+**/__pycache__/
+**/*.py[cod]
+**/.venv/
+**/venv/
+**/env/
+**/.pytest_cache/
+**/.mypy_cache/
+**/.ruff_cache/
+**/*.egg-info/
+allocation-engine/dist/
+allocation-engine/build/
+ml-service/dist/
+ml-service/build/
+rag-service/dist/
+rag-service/build/
+
+# Environment/secrets
+.env
+.env.*
+**/credentials
+**/secrets
+**/*.pem
+**/*.key
+**/*.pkcs12
+**/*.pfx
+**/*.p12
+**/*.jks
+
+# Docker/local runtime
+docker-data/
+postgres_data/
+**/logs/
+**/*.db
+**/*.sqlite
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDE
+.idea/
+.vscode/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
